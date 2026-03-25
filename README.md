@@ -50,6 +50,14 @@ database password, and JWT signing secret.
 **Fix:**  
 Changed file permissions to chmod 600, restricting read/write access to owner only.
 
+**My Experience:**
+At first I didn't understand what I was 
+looking at. It wasn't until I dug deeper 
+into what chmod 644 actually meant that I 
+realized anyone with server access could 
+read every secret key powering the app. 
+I fixed it immediately.
+
 ---
 
 ## Finding 2 — Broken Access Control
@@ -75,6 +83,13 @@ supplier relationships, and Square payment integrations.
 **Fix:**  
 Applied verifyRestaurantOwner() middleware to all affected routes.
 
+**My Experience:**
+When I found out restaurant owners could 
+view each other's private data I felt horrible. 
+These are real business owners trusting the app 
+with sensitive information. Finding this wasn't 
+abstract — it was personal.
+
 ---
 
 ## Finding 3 — Weak Password Hashing
@@ -95,6 +110,14 @@ Moved to bcrypt with 12 rounds. Implemented silent migration for existing
 users — legacy SHA-256 hashes are upgraded to bcrypt on next login. 
 No password reset required.
 
+**My Experience:**
+This one scared me. I had no idea passwords 
+could be stored wrong until I learned the 
+difference between SHA-256 and bcrypt. Knowing 
+my users' passwords weren't as protected as 
+they should be — and that I didn't even know — 
+was a wake up call.
+
 ---
 
 ## Finding 4 — No Account Lockout
@@ -113,6 +136,14 @@ without being blocked.
 **Fix:**  
 Added account lockout after 5 failed attempts with 15 minute cooldown. 
 Lockout resets automatically on successful login.
+
+**My Experience:**
+This one made me feel dumb to be frank. I should have 
+caught it sooner. No limit on login attempts 
+is one of the most basic protections an app 
+can have. Sometimes the obvious things are 
+the easiest to miss when you're focused 
+on building.
 
 ---
 
@@ -136,6 +167,16 @@ implemented in Finding 4, allowing bypass via VPN or IPv6 addresses.
 **Fix:**  
 Updated express-rate-limit and nodemailer. Reverted prisma to clean version 6.0.0.
 
+**My Experience:**
+This finding taught me that security isn't 
+just about the code you write, it's about 
+every library your app depends on. I ran 
+npm audit and found 3 high severity 
+vulnerabilities in dependencies I didn't 
+write and had never thought to check. 
+One of them was directly messing with  
+a fix I had just made.
+
 ---
 
 ## Finding 6 — Zero Security Logging
@@ -155,6 +196,16 @@ incidents or identify patterns of malicious behavior.
 Implemented structured security logging covering failed logins with IP and email, 
 account lockouts, 403 authorization failures, successful logins, and password resets. 
 All events visible in real time via Railway Deploy Logs.
+
+**My Experience:**
+Before this I didn't understand what logs 
+were or why they mattered. Now I check them 
+multiple times a day. The day after 
+implementing security logging I watched 
+real bot attacks hitting my app in real time. 
+Going from completely blind to having security 
+cameras on your app changes how you think 
+about everything.
 
 ---
 
@@ -181,6 +232,14 @@ Fixed requireSubscription to return 401 immediately on missing or expired tokens
 Added authentication check to upload endpoint before any file processing. 
 Added per-user rate limiting of 20 AI messages per hour stacked on existing IP limits.
 
+**My Experience:**
+My heart was racing when I found this. 
+Someone was already exploiting my app in 
+real time while I was taking my security exam. 
+I didn't know if what I had learned over 
+25 days would be enough to stop it. 
+It was. That moment made everything real.
+
 ---
 
 ## Recommendations
@@ -196,7 +255,7 @@ Added per-user rate limiting of 20 AI messages per hour stacked on existing IP l
 
 ## Conclusion
 
-This audit identified and remediated 7 security vulnerabilities across 
+This audit I did identified and remediated 7 security vulnerabilities across 
 authentication, authorization, cryptography, dependency management, 
 logging, and AI-specific attack surfaces.
 
@@ -211,4 +270,4 @@ sensitive business data.
 ---
 
 *Audit conducted as part of my AI security specialization curriculum. 
-All vulnerabilities were responsibly disclosed and fixed by the application owner.*
+All vulnerabilities were responsibly disclosed and fixed by the Joshua Leman.*
